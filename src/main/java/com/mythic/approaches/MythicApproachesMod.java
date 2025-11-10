@@ -2,6 +2,7 @@ package com.mythic.approaches;
 
 import com.mojang.logging.LogUtils;
 import com.mythic.approaches.block.ModBlocks;
+import com.mythic.approaches.item.ModCreativeModeTabs;
 import com.mythic.approaches.item.ModItems;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.level.block.Blocks;
@@ -30,6 +31,8 @@ public class MythicApproachesMod {
 
         NeoForge.EVENT_BUS.register(this);
 
+        ModCreativeModeTabs.register(modEventBus);
+
         ModItems.register(modEventBus);
         ModBlocks.register(modEventBus);
 
@@ -44,9 +47,6 @@ public class MythicApproachesMod {
     }
 
     private void addCreative(BuildCreativeModeTabContentsEvent event) {
-        if (event.getTabKey() == CreativeModeTabs.NATURAL_BLOCKS) {
-            event.accept(ModBlocks.BELLADONNA.get());
-        }
     }
 
     @SubscribeEvent

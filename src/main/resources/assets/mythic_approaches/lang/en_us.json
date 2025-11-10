@@ -2,5 +2,7 @@
   "block.mythic_approaches.belladonna": "Belladonna",
   "block.mythic_approaches.potted_belladonna": "Potted Belladonna",
   "block.mythic_approaches.moly": "Moly",
-  "block.mythic_approaches.potted_moly": "Potted Moly"
+  "block.mythic_approaches.potted_moly": "Potted Moly",
+
+  "creativetab.mythic_approaches.mythic_approaches_tab": "Mythic Approaches"
 }
