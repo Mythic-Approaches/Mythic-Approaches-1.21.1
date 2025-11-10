@@ -40,6 +40,7 @@ public class MythicApproachesMod {
 
     private void commonSetup(FMLCommonSetupEvent event) {
         event.enqueueWork(() -> ((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(ModBlocks.BELLADONNA.getId(), ModBlocks.POTTED_BELLADONNA));
+        event.enqueueWork(() -> ((FlowerPotBlock) Blocks.FLOWER_POT).addPlant(ModBlocks.MOLY.getId(), ModBlocks.POTTED_MOLY));
     }
 
     private void addCreative(BuildCreativeModeTabContentsEvent event) {

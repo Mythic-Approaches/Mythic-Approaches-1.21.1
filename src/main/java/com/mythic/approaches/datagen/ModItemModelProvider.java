@@ -16,6 +16,7 @@ public class ModItemModelProvider extends ItemModelProvider {
     @Override
     protected void registerModels() {
         flowerBlockItem(ModBlocks.BELLADONNA);
+        flowerBlockItem(ModBlocks.MOLY);
     }
 
     private void flowerBlockItem(DeferredBlock<?> block) {

@@ -17,6 +17,8 @@ public class ModBlockStateProvider extends BlockStateProvider {
     protected void registerStatesAndModels() {
         flowerBlockWithItem(ModBlocks.BELLADONNA);
         pottedFlowerBlock(ModBlocks.POTTED_BELLADONNA, ModBlocks.BELLADONNA);
+        flowerBlockWithItem(ModBlocks.MOLY);
+        pottedFlowerBlock(ModBlocks.POTTED_MOLY, ModBlocks.MOLY);
     }
 
     private void pottedFlowerBlock(DeferredBlock<?> deferredBlock, DeferredBlock<?> block_with_texture) {

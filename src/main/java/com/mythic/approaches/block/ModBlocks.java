@@ -21,7 +21,6 @@ public class ModBlocks {
     public static final DeferredRegister.Blocks BLOCKS =
             DeferredRegister.createBlocks(MythicApproachesMod.MOD_ID);
 
-
     public static final DeferredBlock<FlowerBlock> BELLADONNA = registerBlock("belladonna",
             () -> new ParticleFlowerBlock(SuspiciousStewEffects.EMPTY,
                     BlockBehaviour.Properties.ofFullCopy(Blocks.ALLIUM)
@@ -34,6 +33,23 @@ public class ModBlocks {
             () -> new FlowerPotBlock(() ->
                     (FlowerPotBlock) Blocks.FLOWER_POT,
                     ModBlocks.BELLADONNA,
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.POTTED_ALLIUM)
+                            .noOcclusion()
+            )
+    );
+
+    public static final DeferredBlock<FlowerBlock> MOLY = registerBlock("moly",
+            () -> new ParticleFlowerBlock(SuspiciousStewEffects.EMPTY,
+                    BlockBehaviour.Properties.ofFullCopy(Blocks.ALLIUM)
+                            .noCollission()
+                            .noOcclusion()
+            )
+    );
+
+    public static final DeferredBlock<FlowerPotBlock> POTTED_MOLY = registerBlock("potted_moly",
+            () -> new FlowerPotBlock(() ->
+                    (FlowerPotBlock) Blocks.FLOWER_POT,
+                    ModBlocks.MOLY,
                     BlockBehaviour.Properties.ofFullCopy(Blocks.POTTED_ALLIUM)
                             .noOcclusion()
             )
