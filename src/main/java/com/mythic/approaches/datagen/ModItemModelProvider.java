@@ -3,6 +3,7 @@ package com.mythic.approaches.datagen;
 import com.mythic.approaches.MythicApproachesMod;
 import com.mythic.approaches.block.ModBlocks;
 import net.minecraft.data.PackOutput;
+import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.registries.DeferredBlock;

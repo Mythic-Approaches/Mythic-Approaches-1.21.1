@@ -17,6 +17,7 @@ public class ModBlockLootTableProvider extends BlockLootSubProvider {
 
     @Override
     protected void generate() {
+        dropSelf(ModBlocks.CAULDRON.get());
         dropSelf(ModBlocks.BELLADONNA.get());
         add(ModBlocks.POTTED_BELLADONNA.get(), createPotFlowerItemTable(ModBlocks.BELLADONNA.get()));
         dropSelf(ModBlocks.MOLY.get());

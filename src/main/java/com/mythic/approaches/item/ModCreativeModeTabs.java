@@ -20,6 +20,7 @@ public class ModCreativeModeTabs {
                     .icon(() -> new ItemStack(ModBlocks.BELLADONNA.get()))
                     .title(Component.translatable("creativetab.mythic_approaches.mythic_approaches_tab"))
                     .displayItems((itemDisplayParameters, output) -> {
+                        output.accept(ModBlocks.CAULDRON);
                         output.accept(ModBlocks.BELLADONNA);
                         output.accept(ModBlocks.MOLY);
                     }).build());
