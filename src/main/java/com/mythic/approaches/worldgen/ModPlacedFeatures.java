@@ -20,14 +20,14 @@ public class ModPlacedFeatures {
         var configuredFeatures = context.lookup(Registries.CONFIGURED_FEATURE);
 
         register(context, BELLADONNA_PLACED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.BELLADONNA_KEY), List.of(
-                RarityFilter.onAverageOnceEvery(32),
+                RarityFilter.onAverageOnceEvery(16),
                 InSquarePlacement.spread(),
                 PlacementUtils.HEIGHTMAP_WORLD_SURFACE,
                 BiomeFilter.biome()
         ));
 
         register(context, MOLY_PLACED_KEY, configuredFeatures.getOrThrow(ModConfiguredFeatures.MOLY_KEY), List.of(
-                RarityFilter.onAverageOnceEvery(16),
+                RarityFilter.onAverageOnceEvery(8),
                 InSquarePlacement.spread(),
                 PlacementUtils.HEIGHTMAP_WORLD_SURFACE,
                 BiomeFilter.biome()

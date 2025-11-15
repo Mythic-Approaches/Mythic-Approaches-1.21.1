@@ -11,6 +11,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
+import net.minecraft.world.level.levelgen.feature.configurations.RandomPatchConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.SimpleBlockConfiguration;
 import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
 
@@ -22,20 +23,30 @@ public class ModConfiguredFeatures {
 
     public static void bootstrap(BootstrapContext<ConfiguredFeature<?, ?>> context) {
         register(context,
-                BELLADONNA_KEY,
+                MOLY_KEY,
                 Feature.RANDOM_PATCH,
-                FeatureUtils.simplePatchConfiguration(
-                        Feature.SIMPLE_BLOCK,
-                        new SimpleBlockConfiguration(BlockStateProvider.simple(ModBlocks.BELLADONNA.get().defaultBlockState())), List.of(Blocks.GRASS_BLOCK)
+                new RandomPatchConfiguration(
+                        16, // tries: The number of attempts to place a patch in a chunk.
+                        5,  // xzSpread: The horizontal spread of the patch.
+                        3,  // ySpread: The vertical spread of the patch.
+                        FeatureUtils.simplePatchConfiguration(
+                                Feature.SIMPLE_BLOCK,
+                                new SimpleBlockConfiguration(BlockStateProvider.simple(ModBlocks.MOLY.get().defaultBlockState())), List.of(Blocks.GRASS_BLOCK)
+                        ).feature()
                 )
         );
 
         register(context,
-                MOLY_KEY,
+                BELLADONNA_KEY,
                 Feature.RANDOM_PATCH,
-                FeatureUtils.simplePatchConfiguration(
-                        Feature.SIMPLE_BLOCK,
-                        new SimpleBlockConfiguration(BlockStateProvider.simple(ModBlocks.MOLY.get().defaultBlockState())), List.of(Blocks.GRASS_BLOCK)
+                new RandomPatchConfiguration(
+                        32, // tries: The number of attempts to place a patch in a chunk.
+                        5,  // xzSpread: The horizontal spread of the patch.
+                        5,  // ySpread: The vertical spread of the patch.
+                        FeatureUtils.simplePatchConfiguration(
+                                Feature.SIMPLE_BLOCK,
+                                new SimpleBlockConfiguration(BlockStateProvider.simple(ModBlocks.BELLADONNA.get().defaultBlockState())), List.of(Blocks.GRASS_BLOCK)
+                        ).feature()
                 )
         );
     }

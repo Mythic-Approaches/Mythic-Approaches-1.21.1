@@ -21,13 +21,13 @@ public class ModBiomeModifier {
         var biomes = context.lookup(Registries.BIOME);
 
         context.register(ADD_BELLADONNA, new BiomeModifiers.AddFeaturesBiomeModifier(
-                HolderSet.direct(biomes.getOrThrow(Biomes.PLAINS)),
+                HolderSet.direct(biomes.getOrThrow(Biomes.SWAMP), biomes.getOrThrow(Biomes.MANGROVE_SWAMP)),
                 HolderSet.direct(placedFeatures.getOrThrow(ModPlacedFeatures.BELLADONNA_PLACED_KEY)),
                 GenerationStep.Decoration.VEGETAL_DECORATION
         ));
 
         context.register(ADD_MOLY, new BiomeModifiers.AddFeaturesBiomeModifier(
-                HolderSet.direct(biomes.getOrThrow(Biomes.PLAINS)),
+                HolderSet.direct(biomes.getOrThrow(Biomes.BIRCH_FOREST), biomes.getOrThrow(Biomes.OLD_GROWTH_BIRCH_FOREST)),
                 HolderSet.direct(placedFeatures.getOrThrow(ModPlacedFeatures.MOLY_PLACED_KEY)),
                 GenerationStep.Decoration.VEGETAL_DECORATION
         ));
