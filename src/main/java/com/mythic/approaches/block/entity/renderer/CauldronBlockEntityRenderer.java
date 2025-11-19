@@ -25,8 +25,8 @@ public class CauldronBlockEntityRenderer implements BlockEntityRenderer<Cauldron
         final Minecraft mc = Minecraft.getInstance();
         assert mc.level != null;
 
-        final double radius = 0.25;
-        final double height = 0.8;
+        final double radius = 0.25f;
+        final double height = 0.7f;
         // global orbit timer
         final float orbitTime = (mc.level.getGameTime() + partialTick) * 0.8f;
 
@@ -42,7 +42,8 @@ public class CauldronBlockEntityRenderer implements BlockEntityRenderer<Cauldron
             double x = Math.cos(angle) * radius;
             double z = Math.sin(angle) * radius;
 
-            poseStack.translate(0.5 + x, height, 0.5 + z);
+            double bob = Math.sin(orbitTime * 0.3f + i*2) * .04f;
+            poseStack.translate(0.5 + x, height + bob, 0.5 + z);
 
             poseStack.scale(0.37f, 0.37f, 0.37f);
 
