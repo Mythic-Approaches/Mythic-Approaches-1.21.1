@@ -18,6 +18,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class CauldronBlockEntity extends BlockEntity {
     public static final int SLOTS_AMOUNT = 5;
+    public int usedSlots = 0;
 
     public final ItemStackHandler inventory = new ItemStackHandler(SLOTS_AMOUNT) {
         @Override
@@ -27,9 +28,16 @@ public class CauldronBlockEntity extends BlockEntity {
 
         @Override
         protected void onContentsChanged(int slot) {
-            setChanged();
             if (level != null && !level.isClientSide) {
                 level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), Block.UPDATE_ALL);
+                int count = 0;
+                for (int i = 0; i < getSlots(); i++) {
+                    if (!getStackInSlot(i).isEmpty()) {
+                        count++;
+                    }
+                }
+                usedSlots = count;
+                setChanged();
             }
         }
     };
@@ -58,12 +66,14 @@ public class CauldronBlockEntity extends BlockEntity {
     protected void saveAdditional(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         tag.put("inventory", inventory.serializeNBT(registries));
+        tag.putInt("usedSlots", usedSlots);
     }
 
     @Override
     protected void loadAdditional(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         inventory.deserializeNBT(registries, tag.getCompound("inventory"));
+        usedSlots = tag.getInt("usedSlots");
     }
 
     @Override
@@ -79,4 +89,6 @@ public class CauldronBlockEntity extends BlockEntity {
     public ItemStackHandler getInventory() {
         return inventory;
     }
+
+
 }

@@ -2,6 +2,7 @@ package com.mythic.approaches;
 
 import com.mojang.logging.LogUtils;
 import com.mythic.approaches.block.ModBlocks;
+import com.mythic.approaches.block.entity.renderer.CauldronBlockEntityRenderer;
 import com.mythic.approaches.block.entity.ModBlockEntities;
 import com.mythic.approaches.item.ModCreativeModeTabs;
 import com.mythic.approaches.item.ModItems;
@@ -17,6 +18,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
@@ -60,6 +62,14 @@ public class MythicApproachesMod {
     static class ClientModEvents {
         @SubscribeEvent
         static void onClientSetup(FMLClientSetupEvent event) {
+        }
+
+        @SubscribeEvent
+        public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
+            event.registerBlockEntityRenderer(
+                    ModBlockEntities.CAULDRON_ENTITY.get(),
+                    CauldronBlockEntityRenderer::new
+            );
         }
     }
 }
