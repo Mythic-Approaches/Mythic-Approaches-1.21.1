@@ -9,6 +9,7 @@ import net.minecraft.world.item.component.SuspiciousStewEffects;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.FlowerBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
 
 public class ParticleFlowerBlock extends FlowerBlock {
     public ParticleFlowerBlock(Holder<MobEffect> effect, float seconds, Properties properties) {
@@ -20,7 +21,7 @@ public class ParticleFlowerBlock extends FlowerBlock {
     }
 
     @Override
-    public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
+    public void animateTick(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull RandomSource random) {
         // Create 3 particles
         if (level.isClientSide() && random.nextFloat() < .3f) {
             // Increased spread from 0.5 to 1.2 for more space between particles

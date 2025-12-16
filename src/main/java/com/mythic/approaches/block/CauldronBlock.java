@@ -4,15 +4,15 @@ import com.mojang.serialization.MapCodec;
 import com.mythic.approaches.block.entity.CauldronBlockEntity;
 import com.mythic.approaches.recipes.CauldronInput;
 import com.mythic.approaches.recipes.CauldronRecipe;
-import com.mythic.approaches.recipes.ModRecipes;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
@@ -25,8 +25,6 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Optional;
 
 public class CauldronBlock extends BaseEntityBlock {
     public static final VoxelShape SHAPE = Block.box(2, 0, 2, 14, 12, 14);
@@ -76,15 +74,16 @@ public class CauldronBlock extends BaseEntityBlock {
         if (level.getBlockEntity(pos) instanceof CauldronBlockEntity cauldron) {
             //CROUCHING => LOOK FOR RECIPE
             if (player.isCrouching() && stack.isEmpty()) {
-                // if we are on server side
                 if (!level.isClientSide) {
-                    Optional<CauldronRecipe> recipe = findMatchingRecipe(cauldron, level);
+                    CauldronRecipe recipe = cauldron.getCurrentRecipe();
 
-                    if (recipe.isPresent()) {
+                    if (recipe != null) {
                         CauldronInput input = new CauldronInput(cauldron.getInventory());
-                        ItemStack result = recipe.get().assemble(input, level.registryAccess());
+
+                        ItemStack result = recipe.assemble(input, level.registryAccess());
 
                         cauldron.clearContents();
+                        cauldron.checkForRecipe();
 
                         if (!player.getInventory().add(result)) {
                             player.drop(result, false);
@@ -93,32 +92,14 @@ public class CauldronBlock extends BaseEntityBlock {
                         return ItemInteractionResult.SUCCESS;
                     }
                 }
-
             }
             // NOT CROUCHING => ADD / REMOVE ITEM
             else {
-                // Check if empty-handed => retrieve last item
-                if (stack.isEmpty()) {
-                    int slot = getFirstFullSlot(cauldron);
-                    if (slot != -1) {
-                        ItemStack retrievedItem = cauldron.inventory.extractItem(slot, 1, false);
-                        player.addItem(retrievedItem);
-                        cauldron.inventory.setStackInSlot(slot, ItemStack.EMPTY);
-                        level.playSound(player, pos, SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 1, 1);
-
-                        return ItemInteractionResult.SUCCESS;
-                    }
-                } else {
-                    // Add item to first empty slot
-                    int slot = getFirstEmptySlot(cauldron);
-                    if (slot != -1 && !stack.isEmpty()) {
-                        cauldron.inventory.insertItem(slot, stack.copy(), false);
-                        stack.shrink(1);
-                        level.playSound(player, pos, SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 1, 2);
-
-                        return ItemInteractionResult.SUCCESS;
-                    }
-                }
+                // Check if empty-handed
+                if (stack.isEmpty())
+                    return retrieveLastItem(cauldron, level, player, pos);
+                else
+                    return addNewItem(cauldron, stack, level, player, pos);
             }
         }
 
@@ -126,21 +107,80 @@ public class CauldronBlock extends BaseEntityBlock {
     }
 
     /**
-     * Searches for a cauldron recipe
+     * Retrieves the last item in the cauldron
      *
-     * @param cauldron CauldronBlockEntity instance
-     * @param level    Level instance
-     * @return first matching recipe containing the items in the cauldron's inventory
+     * @return SUCCESS if the item stack was retrieved, FAIl otherwise
      */
-    private Optional<CauldronRecipe> findMatchingRecipe(CauldronBlockEntity cauldron, Level level) {
-        CauldronInput input = new CauldronInput(cauldron.getInventory());
+    private ItemInteractionResult retrieveLastItem(CauldronBlockEntity cauldron, Level level, Player player, BlockPos pos) {
+        int slot = getFirstFullSlot(cauldron);
+        if (slot != -1) {
+            ItemStack retrievedItem = cauldron.inventory.extractItem(slot, 1, false);
+            player.addItem(retrievedItem);
+            cauldron.inventory.setStackInSlot(slot, ItemStack.EMPTY);
+            level.playSound(player, pos, SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 1, 1);
 
-        return level.getRecipeManager()
-                .getAllRecipesFor(ModRecipes.CAULDRON_TYPE.get())
-                .stream()
-                .map(RecipeHolder::value)
-                .filter(recipe -> recipe.matches(input, level))
-                .findFirst();
+            if (!level.isClientSide)
+                cauldron.checkForRecipe();
+
+            return ItemInteractionResult.SUCCESS;
+        }
+
+        return ItemInteractionResult.FAIL;
+    }
+
+    /**
+     * Adds a new item to the cauldron
+     *
+     * @return SUCCESS if the item was added, FAIL otherwise
+     */
+    private ItemInteractionResult addNewItem(CauldronBlockEntity cauldron, ItemStack stack, Level level, Player player, BlockPos pos) {
+        int slot = getFirstEmptySlot(cauldron);
+        if (slot != -1 && !stack.isEmpty()) {
+            cauldron.inventory.insertItem(slot, stack.copy(), false);
+            stack.shrink(1);
+            level.playSound(player, pos, SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 1, 2);
+
+            if (!level.isClientSide)
+                cauldron.checkForRecipe();
+
+            return ItemInteractionResult.SUCCESS;
+        }
+
+        return ItemInteractionResult.FAIL;
+    }
+
+    @Override
+    public void animateTick(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull RandomSource random) {
+        super.animateTick(state, level, pos, random);
+
+        if (level.getBlockEntity(pos) instanceof CauldronBlockEntity cauldron && cauldron.hasValidRecipe()) {
+            double centerX = pos.getX() + 0.5;
+            double centerY = pos.getY() + 0.8;  // Matches ~1.25 in command
+            double centerZ = pos.getZ() + 0.5;
+
+            // Command uses 0.2 spread in X and Z
+            double deltaX = 0.2;
+            double deltaZ = 0.2;
+
+            // Random position within the spread area
+            double spawnX = centerX + (random.nextDouble() - 0.5) * 2 * deltaX;
+            double spawnZ = centerZ + (random.nextDouble() - 0.5) * 2 * deltaZ;
+
+            // Speed from command (0.01) with random direction
+            double speed = 0.01;
+            double motionX = (random.nextDouble() - 0.5) * 2 * speed;
+            double motionY = (random.nextDouble() - 0.5) * 2 * speed;
+            double motionZ = (random.nextDouble() - 0.5) * 2 * speed;
+
+            // Spawn multiple particles like command's count=3
+            for (int i = 0; i < 4; i++) {
+                level.addParticle(ParticleTypes.END_ROD,
+                        spawnX,
+                        centerY,
+                        spawnZ,
+                        motionX, motionY, motionZ);
+            }
+        }
     }
 
     /**
