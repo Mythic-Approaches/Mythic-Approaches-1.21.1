@@ -23,6 +23,7 @@ public class ModCreativeModeTabs {
                         output.accept(ModBlocks.CAULDRON);
                         output.accept(ModBlocks.BELLADONNA);
                         output.accept(ModBlocks.MOLY);
+                        output.accept(ModItems.MAGIC_WAND);
                     }).build());
 
     public static void register(IEventBus eventBus) {
